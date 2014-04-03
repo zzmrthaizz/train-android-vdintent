@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.train_android_vdintent"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="18" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.example.train_android_vdintent.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.example.train_android_vdintent.ThemNhanVienActivity"
+            android:label="@string/title_activity_them_nhan_vien" >
+        </activity>
+        <activity
+            android:name="com.example.train_android_vdintent.DanhSachNhanVienActivity"
+            android:label="@string/title_activity_danh_sach_nhan_vien" >
+        </activity>
+        <activity
+            android:name="com.example.train_android_vdintent.DatChucVuActivity"
+            android:label="@string/title_activity_dat_chuc_vu" >
+        </activity>
+        <activity
+            android:name="com.example.train_android_vdintent.ChuyenPhongActivity"
+            android:label="@string/title_activity_chuyen_phong" >
+        </activity>
+    </application>
+
+</manifest>

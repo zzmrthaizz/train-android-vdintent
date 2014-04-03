@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">train-android-vdintent</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_my_adapter">MyAdapter</string>
+    <string name="title_activity_phong_ban_adapter">PhongBanAdapter</string>
+    <string name="title_activity_them_nhan_vien">ThemNhanVien</string>
+    <string name="title_activity_danh_sach_nhan_vien">DanhSachNhanVien</string>
+    <string name="title_activity_dat_chuc_vu">DatChucVuActivity</string>
+    <string name="title_activity_chuyen_phong">ChuyenPhongActivity</string>
+
+</resources>
