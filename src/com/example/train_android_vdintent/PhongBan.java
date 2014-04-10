@@ -18,6 +18,14 @@ public class PhongBan implements Serializable {
 		return namePhong;
 	}
 
+	public String getMaPhong() {
+		return maPhong;
+	}
+
+	public void setMaPhong(String maPhong) {
+		this.maPhong = maPhong;
+	}
+
 	public void setNamePhong(String namePhong) {
 		this.namePhong = namePhong;
 	}
@@ -45,6 +53,9 @@ public class PhongBan implements Serializable {
 	}
 
 	public PhongBan() {
+		this.maPhong = null;
+		this.namePhong = null;
+		this.NhanViens = new ArrayList<NhanVien>();
 	};
 
 	PhongBan(String namePhong, String maPhong) {
@@ -68,7 +79,7 @@ public class PhongBan implements Serializable {
 
 	public void addlistNv(ArrayList<NhanVien> arrayList) {
 		this.NhanViens.clear();
-		this.NhanViens = arrayList;
+		this.NhanViens.addAll(arrayList);
 	}
 
 	@Override

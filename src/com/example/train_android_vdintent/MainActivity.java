@@ -3,6 +3,9 @@ package com.example.train_android_vdintent;
 import java.util.ArrayList;
 import java.util.zip.Inflater;
 
+import javax.crypto.interfaces.PBEKey;
+
+import com.example.MySQLiteHelper;
 import com.example.train_android_adpater.PhongBanAdapter;
 
 import android.R.integer;
@@ -35,17 +38,18 @@ public class MainActivity extends Activity {
 	ListView listView;
 	Button nhap;
 	PhongBan phongbanselected;
+	MySQLiteHelper db;
 
 	public static final int requestcode_nhapnv = 1;
 	public static final int requestcode_xemdsnhanvien = 2;
-	public static final int requestcode_datchuvu =3;
+	public static final int requestcode_datchuvu = 3;
 	public static final int requestcode_suanhanvien = 4;
-	public static final int requestcode_chuyennhanvien =5;
+	public static final int requestcode_chuyennhanvien = 5;
 	public static final int resultcode_datchuvuthanhcon = 31;
 	public static final int resultcode_nhapnvthanhcong = 11;
 	public static final int resultcode_updatethanhcong = 42;
-	public static final int resultcode_suanhanvienthanhcong =41;
-	public static final int resultcode_chuyennhanvienthanhcong =51;
+	public static final int resultcode_suanhanvienthanhcong = 41;
+	public static final int resultcode_chuyennhanvienthanhcong = 51;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,19 +60,9 @@ public class MainActivity extends Activity {
 		tenPban = (EditText) findViewById(R.id.txtTenphong);
 		nhap = (Button) findViewById(R.id.btnnhap);
 		listView = (ListView) findViewById(R.id.listPhong);
-		
-		//Test data
-		PhongBan pb = new PhongBan("Thai","test1");
-		NhanVien nv = new NhanVien("Dang Vo Anh Thai", "01",true);
-		NhanVien nv2 = new NhanVien("Nguyen My Tu Anh", "02",true);
-		NhanVien nv3 = new NhanVien("Dang Vo Anh Thu", "03",true);
-		PhongBan pb2 = new PhongBan("Anh", "test2");
-		pb.addnv(nv);
-		pb.addnv(nv2);
-		pb.addnv(nv3);
-		phongBans.add(pb);
-		phongBans.add(pb2);
-		//end data test
+
+		db = new MySQLiteHelper(this);
+		refeshListPhong();
 		adapter = new PhongBanAdapter(this, R.layout.item_phongban, phongBans);
 
 		listView.setAdapter(adapter);
@@ -81,7 +75,8 @@ public class MainActivity extends Activity {
 				String ten = tenPban.getText() + "";
 				String ma = maPban.getText() + "";
 				PhongBan phongBan = new PhongBan(ten, ma);
-				phongBans.add(phongBan);
+				db.addPhongBan(phongBan);
+				refeshListPhong();
 				adapter.notifyDataSetChanged();
 
 			}
@@ -127,6 +122,15 @@ public class MainActivity extends Activity {
 		return super.onContextItemSelected(item);
 	}
 
+	public void refeshListPhong() {
+		phongBans.clear();
+		phongBans.addAll(db.getAllPhongBans());
+		for (int i = 0; i < phongBans.size(); i++) {
+			phongBans.get(i).addlistNv(db.getListNhanVien(phongBans.get(i)));
+
+		}
+	}
+
 	private void doxoa() {
 		AlertDialog.Builder xoa = new AlertDialog.Builder(MainActivity.this);
 		xoa.setTitle("Xoa du lieu");
@@ -135,7 +139,9 @@ public class MainActivity extends Activity {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				phongBans.remove(phongbanselected);
+				db.deletePhongBan(phongbanselected);
+				phongBans.clear();
+				phongBans.addAll(db.getAllPhongBans());
 				adapter.notifyDataSetChanged();
 
 			}
@@ -161,9 +167,16 @@ public class MainActivity extends Activity {
 	}
 
 	private void dohiends() {
+		PhongBan pBan = new PhongBan();
+		ArrayList<NhanVien> arrayList = db.getListNhanVien(phongbanselected);
+		pBan.setMaPhong(phongbanselected.getMaPhong());
+		pBan.setNamePhong(phongbanselected.getNamePhong());
+		pBan.addlistNv(arrayList);
+
+		// phongbanselected.addlistNv(db.getListNhanVien(phongbanselected));
 		Intent intent = new Intent(this, DanhSachNhanVienActivity.class);
 		Bundle bundle = new Bundle();
-		bundle.putSerializable("Phongban", phongbanselected);
+		bundle.putSerializable("Phongban", pBan);
 		intent.putExtra("data", bundle);
 		startActivityForResult(intent, requestcode_xemdsnhanvien);
 
@@ -180,27 +193,42 @@ public class MainActivity extends Activity {
 		case resultcode_nhapnvthanhcong:
 			Bundle bundle = data.getBundleExtra("data");
 			NhanVien nv = (NhanVien) bundle.getSerializable("Nhanvien");
-			phongbanselected.addnv(nv);
+			db.addNhanVien(nv, phongbanselected.getMaPhong());
+			refeshListPhong();
 			adapter.notifyDataSetChanged();
 			break;
 
 		case resultcode_datchuvuthanhcon:
 			bundle = data.getBundleExtra("data");
 			PhongBan pb = (PhongBan) bundle.getSerializable("Phongban");
-			phongbanselected.getListNhanvien().clear();
+			updatedbPhongBan(phongbanselected, pb);
+			refeshListPhong();
 			phongbanselected.getListNhanvien().addAll(pb.getListNhanvien());
 			adapter.notifyDataSetChanged();
-			
+
 			break;
 		case resultcode_updatethanhcong:
 			bundle = data.getBundleExtra("data");
 			PhongBan pbupdate = (PhongBan) bundle.getSerializable("Phongban");
-			phongbanselected.getListNhanvien().clear();
-			phongbanselected.getListNhanvien().addAll(pbupdate.getListNhanvien());
+			db.deletePhongBan(phongbanselected);
+			db.addPhongBan(pbupdate);
+			for (int i = 0; i < pbupdate.getListNhanvien().size(); i++) {
+				db.addNhanVien(pbupdate.getListNhanvien().get(i),
+						phongbanselected.getMaPhong());
+			}
+			refeshListPhong();
 			adapter.notifyDataSetChanged();
 			break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	public void updatedbPhongBan(PhongBan oldpb, PhongBan newpb) {
+		db.deletePhongBan(oldpb);
+		db.addPhongBan(newpb);
+		for (int i = 0; i < newpb.getListNhanvien().size(); i++) {
+			db.addNhanVien(newpb.getListNhanvien().get(i), oldpb.getMaPhong());
+		}
 	}
 
 	@Override
@@ -209,10 +237,9 @@ public class MainActivity extends Activity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
+
 	public static ArrayList<PhongBan> getlistPhongBan() {
 		return phongBans;
 	}
-
-
 
 }

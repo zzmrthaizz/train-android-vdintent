@@ -2,6 +2,8 @@ package com.example.train_android_vdintent;
 
 import java.util.ArrayList;
 
+import com.example.MySQLiteHelper;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -22,6 +24,7 @@ public class ChuyenPhongActivity extends Activity {
 	PhongBan phongbancurent;
 	ArrayList<PhongBan> arrphong = new ArrayList<PhongBan>();
 	ArrayAdapter<PhongBan> adapter;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

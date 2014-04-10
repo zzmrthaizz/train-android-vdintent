@@ -11,7 +11,7 @@ public class NhanVien implements Serializable {
 	private String code;
 	private boolean gioitinh;
 
-	NhanVien() {
+	public NhanVien() {
 	}
 
 	NhanVien(String name, String code, boolean gioitinh) {

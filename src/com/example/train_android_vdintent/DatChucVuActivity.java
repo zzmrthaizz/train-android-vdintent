@@ -2,6 +2,8 @@ package com.example.train_android_vdintent;
 
 import java.util.ArrayList;
 
+import com.example.MySQLiteHelper;
+
 import android.os.Bundle;
 import android.R.anim;
 import android.R.integer;
@@ -50,8 +52,8 @@ public class DatChucVuActivity extends Activity {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
-					nhanViens.get(arg2).setChucvu(ChucVu.TruongPhong);
-				
+				nhanViens.get(arg2).setChucvu(ChucVu.TruongPhong);
+
 			}
 		});
 		applyChange();
@@ -61,14 +63,12 @@ public class DatChucVuActivity extends Activity {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				nhanViens.get(arg2).setChucvu(ChucVu.PhoPhong);
-				
+
 			}
 		});
 
-
 	}
 
-	
 	private void applyChange() {
 		ok.setOnClickListener(new OnClickListener() {
 
